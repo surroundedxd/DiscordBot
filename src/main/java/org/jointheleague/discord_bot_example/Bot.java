@@ -10,6 +10,7 @@ import org.javacord.api.DiscordApiBuilder;
  *
  */
 import org.jointheleague.modules.*;
+import org.jointheleague.modules.generalutils.GeneralUtils;
 
 public class Bot {
 
@@ -164,6 +165,10 @@ public class Bot {
     Depression depress = new Depression(channelName);
 		api.addMessageCreateListener(depress);
 		helpListener.addHelpEmbed(depress.getHelpEmbed());
+
+		GeneralUtils generalUtils = new GeneralUtils(channelName);
+		api.addMessageCreateListener(generalUtils);
+//		helpListener.addHelpEmbed();
 
     //Depression depress = new Depression(channelName);
 //		api.addMessageCreateListener(depress);
