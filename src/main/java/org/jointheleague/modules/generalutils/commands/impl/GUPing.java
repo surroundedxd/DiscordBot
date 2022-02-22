@@ -9,7 +9,7 @@ public class GUPing extends GUCommand {
     }
 
     @Override
-    public void invoke(MessageCreateEvent event, String input) {
+    public void invoke(MessageCreateEvent event, String[] input) {
         event.getChannel().sendMessage("Pong!");
     }
 }

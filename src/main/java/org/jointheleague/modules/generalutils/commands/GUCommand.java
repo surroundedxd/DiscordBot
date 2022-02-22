@@ -14,7 +14,7 @@ public abstract class GUCommand {
      *
      * @param input The input message without the prefix
      */
-    public abstract void invoke(MessageCreateEvent event, String input);
+    public abstract void invoke(MessageCreateEvent event, String[] input);
 
     // no lobmok :(
     public String[] getAliases() {

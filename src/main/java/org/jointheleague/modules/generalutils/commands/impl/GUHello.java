@@ -13,7 +13,7 @@ public class GUHello extends GUCommand {
     }
 
     @Override
-    public void invoke(MessageCreateEvent event, String input) {
+    public void invoke(MessageCreateEvent event, String[] input) {
         int random = new Random().nextInt(4);
 
         event.getChannel().sendMessage(responses[random]);

@@ -34,7 +34,7 @@ public class FakeMessageEvent implements MessageCreateEvent, CertainMessageEvent
 
     @Override
     public Message getMessage() {
-        return null;
+        return actualMessage.getMessage();
     }
 
     @Override

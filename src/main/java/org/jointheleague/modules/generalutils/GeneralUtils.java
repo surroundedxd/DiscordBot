@@ -4,17 +4,18 @@ import net.aksingh.owmjapis.api.APIException;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.modules.CustomMessageCreateListener;
 import org.jointheleague.modules.generalutils.commands.GUCommand;
-import org.jointheleague.modules.generalutils.commands.impl.GUBrainFacts;
-import org.jointheleague.modules.generalutils.commands.impl.GUHello;
-import org.jointheleague.modules.generalutils.commands.impl.GUPing;
+import org.jointheleague.modules.generalutils.commands.impl.*;
+import org.jointheleague.modules.generalutils.commands.util.JaroWinkler;
 
 public class GeneralUtils extends CustomMessageCreateListener {
-    public static final char prefix = ';'; // Find all doesn't yield this prefix being used anywhere else
+    public static final char prefix = ';';
 
     private final GUCommand[] commands = new GUCommand[]{
             new GUHello(),
             new GUPing(),
-            new GUBrainFacts()
+            new GUBrainFacts(),
+            new GUDeepFry()
+            // new GUCurrencyConverter()
     };
 
     public GeneralUtils(String channelName) {
@@ -25,22 +26,18 @@ public class GeneralUtils extends CustomMessageCreateListener {
     public void handle(MessageCreateEvent event) throws APIException {
         String message = event.getMessageContent();
 
-        if (message.isEmpty()) return;
-        if (message.length() < 3) return;
+        if (message.isEmpty() || event.getMessageAuthor().isYourself() || message.length() < 3) return;
 
         if (message.charAt(0) == prefix) {
-            String command = message.replace(" ", "");
-            if (command.length() <= 1) return;
-            command = command.substring(1);
-            boolean found = false;
+            String[] commands = message.substring(1).split(" ");
 
-            for (GUCommand guCommand : commands) {
-                if (found) return;
-                for (String alias : guCommand.getAliases()) {
-                    if (command.length() < alias.length()) continue;
-                    if (alias.toLowerCase().contains(command)) {
-                        guCommand.invoke(event, command);
-                        found = true;
+            if (commands.length < 1) return ;
+
+            for (GUCommand command : this.commands) {
+                for (String alias : command.getAliases()) {
+                    if (JaroWinkler.jaro_distance(commands[0], alias) > 0.7) {
+                        command.invoke(event, commands);
+                        return;
                     }
                 }
             }
