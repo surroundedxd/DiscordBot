@@ -7,10 +7,16 @@ import org.jointheleague.modules.generalutils.commands.GUCommand;
 import org.jointheleague.modules.generalutils.commands.impl.*;
 import org.jointheleague.modules.generalutils.commands.util.JaroWinkler;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@SuppressWarnings("ALL")
 public class GeneralUtils extends CustomMessageCreateListener {
-    public static final char prefix = ';';
+    private static final char prefix = ';'; // Command prefix
+    private static final double threshold = 0.7; // JaroWrinkler threshold
 
     private final GUCommand[] commands = new GUCommand[]{
+            new GUHelp(),
             new GUHello(),
             new GUPing(),
             new GUBrainFacts(),
@@ -31,16 +37,22 @@ public class GeneralUtils extends CustomMessageCreateListener {
         if (message.charAt(0) == prefix) {
             String[] commands = message.substring(1).split(" ");
 
-            if (commands.length < 1) return ;
+            if (commands.length < 1) return;
 
-            for (GUCommand command : this.commands) {
-                for (String alias : command.getAliases()) {
-                    if (JaroWinkler.jaro_distance(commands[0], alias) > 0.7) {
-                        command.invoke(event, commands);
-                        return;
+            int best = 0;
+            double bestValue = 0.0;
+
+            for (int i = 0; i < this.commands.length; i++) {
+                for (String alias : this.commands[i].getAliases()) {
+                    double distance = JaroWinkler.jaro_distance(commands[0], alias);
+                    if (distance > threshold && distance > bestValue) {
+                        best = i;
+                        bestValue = distance;
                     }
                 }
             }
+
+            this.commands[best].invoke(event, commands);
         }
     }
 }
